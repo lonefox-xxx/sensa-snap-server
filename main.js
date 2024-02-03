@@ -9,7 +9,7 @@ const FormData = require("form-data");
 const Database = require('./database');
 const db = new Database()
 
-const totalPages = 1
+const totalPages = 10
 let i = 1
 let t = 0
 
@@ -49,6 +49,7 @@ async function getPages(i) {
 
 
 async function extractPhotos(link) {
+    console.log(`Item ${t + 1} - started`);
     const { data } = await fetchDataWithRetry({ url: link });
     const $ = cheerio.load(data);
 

@@ -6,7 +6,7 @@ function fetchDataWithRetry({ url, maxRetries = 3, initialTimeout = 5000, data =
     return new Promise(async (resolve, reject) => {
         let retryCount = 0;
         let timeout = initialTimeout;
-
+        let e;
         while (retryCount < maxRetries) {
             try {
                 const response = await axios[method.toLowerCase()](url, {
@@ -33,10 +33,11 @@ function fetchDataWithRetry({ url, maxRetries = 3, initialTimeout = 5000, data =
             } catch (error) {
                 retryCount++;
                 timeout = Math.min(timeout * 2, 10000);
+                e = error
             }
         }
 
-        return resolve({ success: false, data: null });  // Fixed typo here (success instead of succes)
+        return resolve({ success: false, data: null, error: e });  // Fixed typo here (success instead of succes)
     })
 }
 

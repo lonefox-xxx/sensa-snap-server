@@ -6,7 +6,8 @@ const db = new Database()
 const app = express()
 const port = process.env.PORT || 3000
 const processPages = require('./main')
-
+const path = require('path')
+const ConvertandSendInitialPhotos = require('./sendinitialphotos')
 var database
 
 const mongoUser = process.env.MONGO_USER
@@ -26,6 +27,17 @@ app.get('/start', (req, res) => {
     } catch (error) {
         return res.send('scraping started with error')
     }
+})
+app.get('/getdatafile', (req, res) => { res.sendFile(path.join(__dirname, './data.json')) })
+
+app.get('/startconvertandsendinitialphotos', (req, res) => {
+    try {
+        ConvertandSendInitialPhotos()
+        return res.send('convert and sendinitialphotos started')
+    } catch (error) {
+        return res.send('scraping started with error')
+    }
+
 })
 
 app.listen(port, () => {
