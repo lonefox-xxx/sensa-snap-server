@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
 const fs = require('fs');
-const fetchDataWithRetry = require('./utils/fetchDataWithRetry');
+const fetchDataWithRetry = require('../utils/fetchDataWithRetry');
 const crypto = require('crypto');
 
 const totalPages = 10

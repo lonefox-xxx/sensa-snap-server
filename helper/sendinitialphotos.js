@@ -1,7 +1,6 @@
 const fs = require('fs');
-const ConvertImagetoBinaryURL = require('./utils/ConvertImagetoBinaryURL');
-const classifyImages = require('./utils/classifyimgs');
-const Database = require('./database');
+const ConvertImagetoBinaryURL = require('../utils/ConvertImagetoBinaryURL');
+const Database = require('../database/database');
 const { default: axios } = require('axios');
 const FormData = require('form-data');
 const db = new Database()
@@ -36,6 +35,7 @@ async function ConvertandSendInitialPhotos() {
             await db.addLogs({ id, photostorageData: storageData, photoData: sendData }, 'photos')
             fs.unlinkSync(path)
             console.log(`processing completed ${id}`)
+            await sleep((60000 / 4))
         }
 
     } catch (error) {
@@ -89,6 +89,10 @@ async function sendMsg(title, imagsrc, destination) {
 
 function selectePreview(imagearray) {
     return imagearray[0];
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 module.exports = ConvertandSendInitialPhotos

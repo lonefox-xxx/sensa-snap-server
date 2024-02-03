@@ -6,7 +6,7 @@ const fetchDataWithRetry = require('./utils/fetchDataWithRetry');
 const ConvertImagetoBinaryURL = require('./utils/ConvertImagetoBinaryURL');
 const crypto = require('crypto');
 const FormData = require("form-data");
-const Database = require('./database');
+const Database = require('./database/database');
 const db = new Database()
 
 const totalPages = 10
