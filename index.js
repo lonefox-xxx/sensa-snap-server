@@ -18,7 +18,9 @@ app.get('/start', (req, res) => {
         return res.send('scraping started with error')
     }
 })
-app.get('/getdatafile', (req, res) => { res.sendFile(path.join(__dirname, './data.json')) })
+app.get('/getdatafile', (req, res) => { res.sendFile(path.join(__dirname, './resdata.json')) })
+app.get('/saveIds', require('./helper/id'))
+app.get('/updateposts', require('./crons/updatepots'))
 
 app.get('/startconvertandsendinitialphotos', (req, res) => {
     try {
@@ -27,8 +29,8 @@ app.get('/startconvertandsendinitialphotos', (req, res) => {
     } catch (error) {
         return res.send('scraping started with error')
     }
-
 })
+
 
 app.listen(port, () => {
     console.log(`Server running on port : ${port}!`)

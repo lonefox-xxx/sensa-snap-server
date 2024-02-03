@@ -3,16 +3,22 @@ const ConvertImagetoBinaryURL = require('../utils/ConvertImagetoBinaryURL');
 const Database = require('../database/database');
 const { default: axios } = require('axios');
 const FormData = require('form-data');
+const client = require('../database/redis');
+const MoveFirstToLast = require('./movefirsttolast');
 const db = new Database()
 
+let completed = false
 async function ConvertandSendInitialPhotos() {
     try {
-        const data = fs.readFileSync('./resdata.json', 'utf8');
-        const initialData = JSON.parse(data).slice(0, 100);
 
-        for (let i = 0; i < initialData.length; i++) {
-            const item = initialData[i];
-            const { data: { id, photos, title }, page } = item
+        if (completed) return { success: false, msg: 'completed' }
+        const initialDataSize = 100
+
+        for (let i = 0; i < initialDataSize; i++) {
+            const ids = JSON.parse(await client.get('ids')) || []
+            const selectedID = ids[0]
+            const selectedItem = getItemwithID(selectedID)
+            const { data: { id, photos, title }, page } = selectedItem[0]
             const photoData = []
             console.log(`processing ${id}...`)
 
@@ -35,9 +41,12 @@ async function ConvertandSendInitialPhotos() {
             await db.addLogs({ id, photostorageData: storageData, photoData: sendData }, 'photos')
             fs.unlinkSync(path)
             console.log(`processing completed ${id}`)
+            const updatedIDs = MoveFirstToLast(ids)
+            await client.set('ids', JSON.stringify(updatedIDs))
             await sleep((60000 / 4))
         }
-
+        completed = true
+        console.log('initial photo sending completed')
     } catch (error) {
         console.error('Error reading or parsing the JSON file:', error.message);
     }
@@ -89,6 +98,11 @@ async function sendMsg(title, imagsrc, destination) {
 
 function selectePreview(imagearray) {
     return imagearray[0];
+}
+function getItemwithID(id) {
+    const items = JSON.parse(fs.readFileSync('./resdata.json')) || []
+    const selectedItems = items.filter(item => item.data.id == id)
+    return selectedItems
 }
 
 function sleep(ms) {

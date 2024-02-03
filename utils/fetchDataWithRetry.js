@@ -24,7 +24,7 @@ function fetchDataWithRetry({ url, maxRetries = 3, initialTimeout = 5000, data =
                 e = error
             }
         }
-        return resolve({ success: false, data: null, error: e.message });
+        return resolve({ success: false, data: null, error: e });
     })
 }
 
