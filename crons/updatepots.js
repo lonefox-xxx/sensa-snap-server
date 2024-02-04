@@ -52,9 +52,7 @@ async function ConvertandSendPhotos(item) {
     }
 }
 
-
 async function sendFile(path) {
-    const botToken = "6831900257:AAG8MBE0FKJIaB44qbAWQVfpswN9v9OH6xI";
     const apiUrl = `https://api.telegram.org/bot${botToken}/sendDocument`;
     const chatId = STORAGE_CHANNELID;
     const formData = new FormData();
@@ -76,7 +74,6 @@ async function sendFile(path) {
 }
 
 async function sendMsg(title, imagsrc, destination) {
-
     const apiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
     const messageCaption = `${title}!\n\n[click heare to see all photos](${destination})\n\njoin ${channelId} for more`;
     const payload = {

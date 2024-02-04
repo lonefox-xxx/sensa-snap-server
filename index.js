@@ -8,6 +8,7 @@ const port = process.env.PORT || 3000
 const processPages = require('./main')
 const path = require('path')
 const ConvertandSendInitialPhotos = require('./helper/sendinitialphotos')
+const handleAutoUpload = require('./crons/handleAutoupload')
 
 app.get('/', (req, res) => res.send('everything ok'))
 app.get('/start', (req, res) => {
@@ -31,6 +32,9 @@ app.get('/startconvertandsendinitialphotos', (req, res) => {
     }
 })
 
+
+// Cron jobs
+handleAutoUpload()
 
 app.listen(port, () => {
     console.log(`Server running on port : ${port}!`)
