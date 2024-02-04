@@ -45,7 +45,7 @@ async function ConvertandSendPhotos(item) {
         const Data = { id, title, created: new Date().getTime(), preview, photoData, page }
         fs.writeFileSync(path, JSON.stringify(Data));
         const siteUrl = `https://sensa-snap.vercel.app/photo/${id}`
-        const [storageData, sendData] = await Promise.all([sendFile(path), sendMsg(title, preview.url,),])
+        const [storageData, sendData] = await Promise.all([sendFile(path), sendMsg(title, preview.url, siteUrl)])
         await db.addLogs({ id, photostorageData: storageData, photoData: sendData }, 'photos')
         fs.unlinkSync(path)
         const postUrl = `https://t.me/sensasnap/${sendData.result.message_id}`
