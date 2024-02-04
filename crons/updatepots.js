@@ -5,6 +5,7 @@ const ConvertImagetoBinaryURL = require("../utils/ConvertImagetoBinaryURL");
 const Database = require("../database/database");
 const { default: axios } = require("axios");
 const FormData = require("form-data");
+const addUploadlogs = require("../utils/addUploadlogs");
 const db = new Database()
 
 const botToken = process.env.BOT_TOKEN;
@@ -43,9 +44,12 @@ async function ConvertandSendPhotos(item) {
         const path = `${id}.json`
         const Data = { id, title, created: new Date().getTime(), preview, photoData, page }
         fs.writeFileSync(path, JSON.stringify(Data));
-        const [storageData, sendData] = await Promise.all([sendFile(path), sendMsg(title, preview.url, `https://sensa-snap.vercel.app/photo/${id}`),])
+        const siteUrl = `https://sensa-snap.vercel.app/photo/${id}`
+        const [storageData, sendData] = await Promise.all([sendFile(path), sendMsg(title, preview.url,),])
         await db.addLogs({ id, photostorageData: storageData, photoData: sendData }, 'photos')
         fs.unlinkSync(path)
+        const postUrl = `https://t.me/sensasnap/${sendData.result.message_id}`
+        await addUploadlogs(id, preview.url, title, postUrl, siteUrl)
         console.log(`processing completed ${id}`)
     } catch (error) {
         console.error('Error reading or parsing the JSON file:', error.message);

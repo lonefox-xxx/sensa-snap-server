@@ -5,6 +5,7 @@ const { default: axios } = require('axios');
 const FormData = require('form-data');
 const client = require('../database/redis');
 const MoveFirstToLast = require('./movefirsttolast');
+const addUploadlogs = require('../utils/addUploadlogs');
 const db = new Database()
 
 let completed = false
@@ -34,15 +35,18 @@ async function ConvertandSendInitialPhotos() {
             const path = `${id}.json`
             const Data = { id, title, created: new Date().getTime(), preview, photoData, page }
             fs.writeFileSync(path, JSON.stringify(Data));
+            const siteUrl = `https://sensa-snap.vercel.app/photo/${id}`
             const [storageData, sendData] = await Promise.all([
                 sendFile(path),
-                sendMsg(title, preview.url, `https://sensa-snap.vercel.app/photo/${id}`)
+                sendMsg(title, preview.url, siteUrl)
             ])
             await db.addLogs({ id, photostorageData: storageData, photoData: sendData }, 'photos')
             fs.unlinkSync(path)
             console.log(`processing completed ${id}`)
             const updatedIDs = MoveFirstToLast(ids)
             await client.set('ids', JSON.stringify(updatedIDs))
+            const postUrl = `https://t.me/sensasnap/${sendData.result.message_id}`
+            await addUploadlogs(id, preview.url, title, postUrl, siteUrl)
             await sleep((60000 / 4))
         }
         completed = true
